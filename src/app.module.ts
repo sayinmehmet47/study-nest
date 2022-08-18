@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { configValidationSchema } from './config.schema';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -13,8 +16,8 @@ import { configValidationSchema } from './config.schema';
       validationSchema: configValidationSchema,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
+      imports: [ConfigModule, AuthModule, UsersModule],
+      inject: [ConfigService, AuthService, UsersService],
       useFactory: async (configService: ConfigService) => {
         return {
           type: 'postgres',
@@ -28,6 +31,8 @@ import { configValidationSchema } from './config.schema';
         };
       },
     }),
+    UsersModule,
+    AuthModule,
     UsersModule,
   ],
   controllers: [AppController],
