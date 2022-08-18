@@ -1,25 +1,31 @@
-import { UsersModule } from './users/users.module';
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User } from './users/user.entity';
+import { UsersModule } from './users/users.module';
+import { configValidationSchema } from './config.schema';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'database-1.c0h1s2ebnwir.us-east-1.rds.amazonaws.com',
-      port: 5432,
-      username: 'postgres',
-      password: 'Mardin.1992,',
-      entities: [User],
-      synchronize: true,
-      logging: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
+    ConfigModule.forRoot({
+      envFilePath: [`stage.${process.env.STAGE}.env`],
+      validationSchema: configValidationSchema,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          type: 'postgres',
+          host: configService.get('DB_HOST'),
+          port: configService.get('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_DATABASE'),
+          autoLoadEntities: true,
+          synchronize: true,
+        };
       },
     }),
     UsersModule,
