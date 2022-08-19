@@ -1,3 +1,4 @@
+import { CreateUserDto } from './../users/create-user.dto';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -20,6 +21,18 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async register(user: CreateUserDto) {
+    console.log(user);
+    const payload = {
+      username: user.username,
+      email: user.email,
+      password: user.password,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
