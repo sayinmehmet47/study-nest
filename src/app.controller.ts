@@ -1,3 +1,4 @@
+import { loginUserDto } from './users/login-user.dto';
 import {
   Body,
   Controller,
@@ -12,8 +13,8 @@ import { LocalAuthGuard } from './auth/guards/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ApiParam, ApiProperty } from '@nestjs/swagger';
-import { User } from './users/users.service';
-import { CreateUserDto } from './users/create-user.dto';
+import { User } from './users/users.entity';
+import { createUserDto } from './users/create-user.dto';
 
 @Controller()
 export class AppController {
@@ -28,6 +29,10 @@ export class AppController {
   }
 
   @UseGuards(LocalAuthGuard)
+  @ApiParam({
+    name: 'user',
+    type: loginUserDto,
+  })
   @Post('auth/login')
   async login(@Request() req) {
     return this.authService.login(req.user);
@@ -42,7 +47,7 @@ export class AppController {
   @Post('auth/register')
   @ApiParam({
     name: 'user',
-    type: CreateUserDto,
+    type: createUserDto,
   })
   async register(@Body() user: User) {
     return this.authService.register(user);

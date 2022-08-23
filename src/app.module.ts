@@ -8,6 +8,7 @@ import { configValidationSchema } from './config.schema';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersService } from './users/users.service';
+import { DenemeModule } from './deneme/deneme.module';
 
 @Module({
   imports: [
@@ -31,9 +32,9 @@ import { UsersService } from './users/users.service';
         };
       },
     }),
-    UsersModule,
     AuthModule,
     UsersModule,
+    DenemeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
